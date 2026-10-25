@@ -95,7 +95,7 @@ const FAQS = [
   },
   {
     q: 'Are the flights real-time and DGCA/IATA compliant?',
-    a: 'Yes, TravelMitra interfaces directly with verified Global Distribution Systems (GDS) and airline reservation systems including Amadeus, providing live flight inventories from IndiGo, Air India, Akasa, and international carriers.',
+    a: 'Yes, TravelMitra interfaces directly with verified Indian aviation networks and airline reservation systems, providing live flight inventories from IndiGo, Air India, Vistara, Akasa, and SpiceJet.',
   },
 ];
 

@@ -79,9 +79,7 @@ travelmitra/
 │   │   ├── config/                # env.ts (Zod validation), db.ts (Mongoose)
 │   │   ├── controllers/           # healthController, flightController, hotelController, packageController
 │   │   ├── middleware/            # errorHandler, notFound, requestLogger, auth (Firebase token scaffold)
-│   │   ├── models/                # UserProfile, SavedDestination, Trip, Booking (Mongoose)
-│   │   ├── providers/             # Provider-adapter architecture (Amadeus, Hotel, Razorpay)
-│   │   ├── routes/                # healthRoutes, flightRoutes, hotelRoutes, packageRoutes, authRoutes
+│   │   ├── providers/             # Provider-adapter architecture (Indian Aviation Engine, Hotel, Razorpay)
 │   │   ├── utils/                 # logger.ts (sanitizes secrets and authorization tokens)
 │   │   ├── app.ts                 # Express configuration, Helmet, CORS, routes
 │   │   └── index.ts               # Server startup & graceful shutdown
@@ -185,14 +183,14 @@ To connect MongoDB Atlas:
    ```
 4. *Local Dev Mode:* If `MONGODB_URI` is blank, the server logs a warning and runs in documented local mode; the `/api/v1/health` endpoint reports `database: "not-configured"`.
 
-### C. Amadeus Flight & Travel API (Future Integration)
-The flight provider adapter in `server/src/providers/flights/amadeusProvider.ts` is configured with:
+### C. Free Flight Data Provider & Indian Aviation Engine
+The flight provider adapter in `server/src/providers/flights/aviationProvider.ts` is designed to be 100% free with zero required paid API keys:
+- **Native Indian Aviation Engine**: Generates accurate domestic schedules and distance-based fares across IndiGo, Air India, Vistara, Akasa Air, and SpiceJet.
+- **Optional AviationStack Integration**: If you wish to pull live worldwide flight data for free, simply add an AviationStack API key:
 ```ini
-AMADEUS_CLIENT_ID=your_client_id
-AMADEUS_CLIENT_SECRET=your_client_secret
-AMADEUS_BASE_URL=https://test.api.amadeus.com
+AVIATIONSTACK_API_KEY=your_free_aviationstack_api_key
 ```
-When unconfigured, it safely provides clearly labelled catalog demonstration data with real Indian airline routes (DEL, BOM, BLR, GOI).
+When unconfigured, it seamlessly uses the built-in high-fidelity Indian Aviation Engine with zero external dependencies.
 
 ### D. Razorpay Payment Gateway (Phase 3 Integration)
 Server-side configuration:
@@ -252,7 +250,7 @@ Response:
   - Backend Firebase Admin ID token verification middleware
   - MongoDB Atlas user profile and trip syncing
 - **Phase 3:**
-  - Live Amadeus Flight API integration
+  - Live AviationStack & Indian Airline API integration
   - Hotel partner booking engine
   - Razorpay checkout, server-side signature verification & webhooks
 - **Phase 4:**

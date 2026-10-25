@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { flightProvider } from '../providers/flights/amadeusProvider.js';
+import { flightProvider } from '../providers/flights/aviationProvider.js';
 import { z } from 'zod';
 
 const flightSearchSchema = z.object({

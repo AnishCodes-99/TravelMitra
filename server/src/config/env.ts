@@ -23,10 +23,8 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().optional().default(''),
   RAZORPAY_KEY_SECRET: z.string().optional().default(''),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional().default(''),
-  // Amadeus
-  AMADEUS_CLIENT_ID: z.string().optional().default(''),
-  AMADEUS_CLIENT_SECRET: z.string().optional().default(''),
-  AMADEUS_BASE_URL: z.string().default('https://test.api.amadeus.com'),
+  // Flight Provider (Optional free AviationStack API key; falls back to native Indian Aviation Engine)
+  AVIATIONSTACK_API_KEY: z.string().optional().default(''),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

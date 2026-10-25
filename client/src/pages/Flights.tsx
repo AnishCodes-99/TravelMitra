@@ -86,8 +86,8 @@ export const Flights: React.FC = () => {
         <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
           <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
           <div>
-            <strong>Phase 1 Preliminary Search Mode:</strong> Displaying verified flight schedules
-            from our Amadeus flight provider adapter. Real-time booking checkouts with Razorpay will be
+            <strong>Live Flight Search Engine:</strong> Displaying verified domestic flight schedules
+            from our TravelMitra Indian Aviation Engine. Real-time booking checkouts with Razorpay will be
             unlocked in the upcoming payment & reservation phase.
           </div>
         </div>
