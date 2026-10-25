@@ -8,6 +8,8 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { formatINR } from '../lib/utils';
 
+import { RazorpayModal, BookingPaymentItem } from '../components/payment/RazorpayModal';
+
 export const Packages: React.FC = () => {
   const [searchParams] = useSearchParams();
   const destination = searchParams.get('destination') || '';
@@ -17,6 +19,7 @@ export const Packages: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
+  const [paymentItem, setPaymentItem] = useState<BookingPaymentItem | null>(null);
 
   useEffect(() => {
     document.title = `${destination || 'All'} Holiday Packages — TravelMitra`;
@@ -201,15 +204,41 @@ export const Packages: React.FC = () => {
               <Button variant="outline" size="sm" onClick={() => setSelectedPackage(null)}>
                 Close
               </Button>
-              <Link to="/contact">
-                <Button variant="primary" size="sm">
-                  Customize with Travel Mitra
-                </Button>
-              </Link>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  const pkgToBook = selectedPackage;
+                  setSelectedPackage(null);
+                  setPaymentItem({
+                    id: pkgToBook.id,
+                    type: 'package',
+                    title: pkgToBook.title,
+                    subtitle: `${pkgToBook.duration} • Departure from ${departureCity}`,
+                    price: pkgToBook.pricePerPerson,
+                    details: [
+                      { label: 'Package', value: pkgToBook.title },
+                      { label: 'Destination', value: pkgToBook.destination },
+                      { label: 'Duration', value: pkgToBook.duration },
+                      { label: 'Departure City', value: departureCity },
+                      { label: 'Primary Inclusions', value: pkgToBook.inclusions.slice(0, 2).join(', ') },
+                    ],
+                  });
+                }}
+              >
+                Book & Pay with Razorpay
+              </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Razorpay Interactive Checkout Modal */}
+      <RazorpayModal
+        isOpen={!!paymentItem}
+        onClose={() => setPaymentItem(null)}
+        bookingItem={paymentItem}
+      />
     </div>
   );
 };

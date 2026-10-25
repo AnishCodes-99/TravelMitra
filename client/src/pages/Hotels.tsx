@@ -9,6 +9,8 @@ import { Button } from '../components/ui/Button';
 import { formatINR } from '../lib/utils';
 
 
+import { RazorpayModal, BookingPaymentItem } from '../components/payment/RazorpayModal';
+
 export const Hotels: React.FC = () => {
   const [searchParams] = useSearchParams();
   const city = searchParams.get('city') || 'Goa';
@@ -22,6 +24,7 @@ export const Hotels: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedHotel, setSelectedHotel] = useState<HotelItem | null>(null);
+  const [paymentItem, setPaymentItem] = useState<BookingPaymentItem | null>(null);
 
   useEffect(() => {
     document.title = `Hotels in ${city} — TravelMitra`;
@@ -217,15 +220,41 @@ export const Hotels: React.FC = () => {
               <Button variant="outline" size="sm" onClick={() => setSelectedHotel(null)}>
                 Close
               </Button>
-              <Link to="/contact">
-                <Button variant="primary" size="sm">
-                  Proceed to Mitra Concierge
-                </Button>
-              </Link>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  const hotelToBook = selectedHotel;
+                  setSelectedHotel(null);
+                  setPaymentItem({
+                    id: hotelToBook.id,
+                    type: 'hotel',
+                    title: hotelToBook.name,
+                    subtitle: `${hotelToBook.city}, India • ${hotelToBook.starRating}-Star Luxury Stay`,
+                    price: hotelToBook.totalPrice || hotelToBook.pricePerNight * rooms,
+                    details: [
+                      { label: 'Hotel Name', value: hotelToBook.name },
+                      { label: 'City', value: hotelToBook.city },
+                      { label: 'Dates', value: `${checkInDate} to ${checkOutDate}` },
+                      { label: 'Rooms & Guests', value: `${rooms} Room, ${adults} Adults` },
+                      { label: 'Inclusions', value: 'Buffet Breakfast & High-Speed WiFi' },
+                    ],
+                  });
+                }}
+              >
+                Proceed to Razorpay Payment
+              </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Razorpay Interactive Checkout Modal */}
+      <RazorpayModal
+        isOpen={!!paymentItem}
+        onClose={() => setPaymentItem(null)}
+        bookingItem={paymentItem}
+      />
     </div>
   );
 };

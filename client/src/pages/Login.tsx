@@ -30,13 +30,27 @@ export const Login: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
+  const formatAuthError = (err: any) => {
+    const code = err?.code || '';
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+      return 'Incorrect email or password. Please check your credentials or register a new account.';
+    }
+    if (code === 'auth/popup-closed-by-user') {
+      return 'Google sign-in popup was closed before completing.';
+    }
+    if (code === 'auth/network-request-failed') {
+      return 'Network connectivity issue. Please check your internet connection.';
+    }
+    return (err as Error).message || 'Unable to authenticate. Please try again.';
+  };
+
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setAuthError(null);
       await login(data.email, data.password);
       navigate('/dashboard');
     } catch (err) {
-      setAuthError((err as Error).message);
+      setAuthError(formatAuthError(err));
     }
   };
 
@@ -47,7 +61,7 @@ export const Login: React.FC = () => {
       await loginWithGoogle();
       navigate('/dashboard');
     } catch (err) {
-      setAuthError((err as Error).message);
+      setAuthError(formatAuthError(err));
     } finally {
       setLoadingGoogle(false);
     }

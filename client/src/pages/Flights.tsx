@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Plane, Calendar, Users, ArrowRight, Filter, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Plane, Calendar, Users, ArrowRight, Filter, AlertCircle } from 'lucide-react';
 import { api } from '../services/api';
 import { FlightItem } from '../types';
 import { Card } from '../components/ui/Card';
@@ -8,6 +8,8 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { formatINR } from '../lib/utils';
 
+
+import { RazorpayModal, BookingPaymentItem } from '../components/payment/RazorpayModal';
 
 export const Flights: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +23,7 @@ export const Flights: React.FC = () => {
   const [flights, setFlights] = useState<FlightItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFlight, setSelectedFlight] = useState<FlightItem | null>(null);
+  const [paymentItem, setPaymentItem] = useState<BookingPaymentItem | null>(null);
 
   useEffect(() => {
     document.title = `${origin} to ${destination} Flights — TravelMitra`;
@@ -223,7 +225,23 @@ export const Flights: React.FC = () => {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => setSelectedFlight(flight)}
+                        onClick={() => {
+                          setPaymentItem({
+                            id: flight.id,
+                            type: 'flight',
+                            title: `${flight.origin} → ${flight.destination} Flight`,
+                            subtitle: `${flight.airline} (${flight.flightNumber}) • Non-Stop • ${cabinClass}`,
+                            price: flight.price,
+                            details: [
+                              { label: 'Airline', value: flight.airline },
+                              { label: 'Flight Number', value: flight.flightNumber },
+                              { label: 'Departure', value: `${flight.origin} (${flight.departureTime})` },
+                              { label: 'Arrival', value: `${flight.destination} (${flight.arrivalTime})` },
+                              { label: 'Date', value: departureDate },
+                              { label: 'Passengers', value: `${passengers} Passenger(s)` },
+                            ],
+                          });
+                        }}
                         className="mt-2"
                       >
                         Book Flight
@@ -237,65 +255,12 @@ export const Flights: React.FC = () => {
         </div>
       </div>
 
-      {/* Preliminary Booking Modal */}
-      {selectedFlight && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-lg text-slate-900">Flight Selection Preview</h3>
-              <button
-                onClick={() => setSelectedFlight(null)}
-                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Flight:</span>
-                <span className="font-bold text-slate-900">
-                  {selectedFlight.airline} ({selectedFlight.flightNumber})
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Route:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedFlight.origin} → {selectedFlight.destination}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Schedule:</span>
-                <span className="font-semibold text-slate-900">
-                  {selectedFlight.departureTime} - {selectedFlight.arrivalTime} ({selectedFlight.duration})
-                </span>
-              </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2">
-                <span className="text-slate-500">Total Amount:</span>
-                <span className="text-lg font-extrabold text-brand-600">
-                  {formatINR(selectedFlight.price)}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-900 border border-emerald-200 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Best fare guaranteed. 24/7 dedicated Mitra concierge assistance included with your booking.</span>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setSelectedFlight(null)}>
-                Close
-              </Button>
-              <Link to="/contact">
-                <Button variant="primary" size="sm">
-                  Inquire via Mitra Concierge
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Razorpay Interactive Checkout Modal */}
+      <RazorpayModal
+        isOpen={!!paymentItem}
+        onClose={() => setPaymentItem(null)}
+        bookingItem={paymentItem}
+      />
     </div>
   );
 };

@@ -7,10 +7,10 @@ export interface FirebaseConfigValidation {
 }
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCC2nr-dPHMTOqbzjmks2_C7EaUE4Am2ps',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'travelmitra-46cbd.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'travelmitra-46cbd',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:184548343474:web:90c6f131e8b2088b5813ab',
 };
 
 export function checkFirebaseConfig(): FirebaseConfigValidation {

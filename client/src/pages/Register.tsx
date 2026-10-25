@@ -36,13 +36,27 @@ export const Register: React.FC = () => {
     resolver: zodResolver(registerSchema),
   });
 
+  const formatAuthError = (err: any) => {
+    const code = err?.code || '';
+    if (code === 'auth/email-already-in-use') {
+      return 'An account with this email address already exists. Please log in instead.';
+    }
+    if (code === 'auth/weak-password') {
+      return 'Password should be at least 6 characters.';
+    }
+    if (code === 'auth/invalid-email') {
+      return 'Please enter a valid email address.';
+    }
+    return (err as Error).message || 'Registration failed. Please try again.';
+  };
+
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       setAuthError(null);
       await registerUser(data.email, data.password, data.displayName);
       navigate('/dashboard');
     } catch (err) {
-      setAuthError((err as Error).message);
+      setAuthError(formatAuthError(err));
     }
   };
 

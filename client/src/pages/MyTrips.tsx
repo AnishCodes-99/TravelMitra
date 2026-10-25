@@ -9,6 +9,15 @@ import { formatINR } from '../lib/utils';
 export const MyTrips: React.FC = () => {
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
 
+  const [userBookings] = useState<any[]>(() => {
+    try {
+      const stored = localStorage.getItem('travelmitra_user_bookings');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const sampleTrips = [
     {
       id: 'TM-2026-9812',
@@ -39,6 +48,8 @@ export const MyTrips: React.FC = () => {
     },
   ];
 
+  const allTrips = [...userBookings, ...sampleTrips];
+
   return (
     <div className="bg-slate-50 min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
@@ -64,7 +75,7 @@ export const MyTrips: React.FC = () => {
 
         {/* Trips List */}
         <div className="space-y-4">
-          {sampleTrips.map(trip => (
+          {allTrips.map(trip => (
             <Card key={trip.id} className="p-6">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="space-y-2">
