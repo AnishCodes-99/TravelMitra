@@ -1,0 +1,56 @@
+name: Deploy TravelMitra to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build client for GitHub Pages
+        run: npm run build --workspace=client
+        env:
+          VITE_FIREBASE_API_KEY: AIzaSyCC2nr-dPHMTOqbzjmks2_C7EaUE4Am2ps
+          VITE_FIREBASE_AUTH_DOMAIN: travelmitra-46cbd.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: travelmitra-46cbd
+          VITE_FIREBASE_APP_ID: 1:184548343474:web:90c6f131e8b2088b5813ab
+          VITE_FIREBASE_STORAGE_BUCKET: travelmitra-46cbd.firebasestorage.app
+          VITE_FIREBASE_MESSAGING_SENDER_ID: 184548343474
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'client/dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

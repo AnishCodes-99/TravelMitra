@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
@@ -33,10 +33,14 @@ const queryClient = new QueryClient({
 });
 
 export const App: React.FC = () => {
+  // Use HashRouter on GitHub Pages to guarantee zero 404s on refresh or sub-path routing
+  const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
+  const Router = isGitHubPages ? HashRouter : BrowserRouter;
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
+        <Router>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
@@ -58,7 +62,7 @@ export const App: React.FC = () => {
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
-        </BrowserRouter>
+        </Router>
       </AuthProvider>
     </QueryClientProvider>
   );
