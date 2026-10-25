@@ -43,24 +43,19 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
-      {/* Top micro bar for Indian context */}
-      <div className="bg-slate-900 text-slate-300 text-[11px] py-1 px-4 sm:px-8 border-b border-slate-800">
+      {/* Top micro bar */}
+      <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-8 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-brand-400 font-medium">
-              🇮🇳 Dedicated to Indian Travellers
+            <span className="flex items-center gap-1 text-brand-400 font-semibold tracking-wide">
+              🇮🇳 India's Modern Travel Platform
             </span>
-            <span className="hidden sm:inline text-slate-500">•</span>
-            <span className="hidden sm:inline text-slate-400">Default Currency: INR (₹)</span>
-            <span className="hidden sm:inline text-slate-500">•</span>
-            <span className="hidden md:inline text-slate-400">Asia/Kolkata (IST)</span>
+            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="hidden sm:inline text-slate-400">All Fares in INR (₹)</span>
           </div>
           <div className="flex items-center gap-4 text-slate-300">
-            <Link to="/contact" className="hover:text-white transition-colors">
-              24/7 Mitra Helpdesk
-            </Link>
-            <Link to="/faq" className="hover:text-white transition-colors">
-              Baggage & Refund Policy
+            <Link to="/contact" className="hover:text-white transition-colors font-medium">
+              24/7 Mitra Helpdesk: 1800-200-4567
             </Link>
           </div>
         </div>
@@ -70,22 +65,12 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group py-1">
+          <Link to="/" className="flex items-center group py-1">
             <img
               src="/logo.png"
               alt="TravelMitra"
               className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
             />
-            <div className="hidden sm:block border-l border-slate-200 pl-3">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] bg-brand-100 text-brand-700 font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
-                  India
-                </span>
-              </div>
-              <p className="text-[10px] font-semibold text-slate-500 tracking-wide mt-0.5">
-                भारत का अपना ट्रैवल हमसफ़र
-              </p>
-            </div>
           </Link>
 
           {/* Desktop Nav Links */}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Building2, Calendar, Users, Star, MapPin, Check, Info } from 'lucide-react';
+import { Building2, Calendar, Users, Star, MapPin, Check, ShieldCheck } from 'lucide-react';
 import { api } from '../services/api';
 import { HotelItem } from '../types';
 import { Card } from '../components/ui/Card';
@@ -21,6 +21,7 @@ export const Hotels: React.FC = () => {
   const [hotels, setHotels] = useState<HotelItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedHotel, setSelectedHotel] = useState<HotelItem | null>(null);
 
   useEffect(() => {
     document.title = `Hotels in ${city} — TravelMitra`;
@@ -79,16 +80,6 @@ export const Hotels: React.FC = () => {
               Change Dates / City
             </Button>
           </Link>
-        </div>
-
-        {/* Phase 1 Architecture Notice */}
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Phase 1 Preliminary Search Mode:</strong> Displaying audited boutique & heritage
-            stays. Direct room inventory booking and hotelier confirmation codes will be activated in
-            Phase 3.
-          </div>
         </div>
 
         {/* Hotels list */}
@@ -154,11 +145,7 @@ export const Hotels: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      onClick={() =>
-                        alert(
-                          `Selected ${hotel.name} in ${hotel.city}. Room booking will be active in Phase 3!`
-                        )
-                      }
+                      onClick={() => setSelectedHotel(hotel)}
                     >
                       Reserve Room
                     </Button>
@@ -169,6 +156,76 @@ export const Hotels: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Luxury Hotel Reservation Modal */}
+      {selectedHotel && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-lg text-slate-900">Hotel Reservation Summary</h3>
+              <button
+                onClick={() => setSelectedHotel(null)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center gap-3">
+                <img
+                  src={selectedHotel.imageUrl}
+                  alt={selectedHotel.name}
+                  className="w-16 h-16 rounded-xl object-cover border border-slate-200"
+                />
+                <div>
+                  <h4 className="font-bold text-slate-900 text-base">{selectedHotel.name}</h4>
+                  <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 text-brand-500" /> {selectedHotel.city}, India
+                  </p>
+                  <span className="text-[10px] bg-brand-50 text-brand-700 font-bold px-2 py-0.5 rounded-full inline-block mt-1">
+                    {selectedHotel.starRating}-Star Luxury Stay
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-xl text-xs">
+                <div>
+                  <span className="text-slate-500 block">Check-In / Out:</span>
+                  <span className="font-semibold text-slate-800">{checkInDate} → {checkOutDate}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">Rooms & Guests:</span>
+                  <span className="font-semibold text-slate-800">{rooms} Room, {adults} Adults</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between border-t border-slate-200 pt-3">
+                <span className="text-slate-600">Total Price ({rooms} room, incl. GST):</span>
+                <span className="text-xl font-extrabold text-brand-600">
+                  {formatINR(selectedHotel.totalPrice || selectedHotel.pricePerNight * rooms)}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-900 border border-emerald-200 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Mitra Guarantee: Free cancellation & verified front-desk check-in guaranteed.</span>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setSelectedHotel(null)}>
+                Close
+              </Button>
+              <Link to="/contact">
+                <Button variant="primary" size="sm">
+                  Proceed to Mitra Concierge
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

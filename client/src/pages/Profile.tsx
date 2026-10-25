@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Settings, Save, Info } from 'lucide-react';
+import { User, Mail, Phone, Settings, Save } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
@@ -30,15 +30,6 @@ export const Profile: React.FC = () => {
           <p className="text-xs text-slate-500 mt-1">
             Manage your personal contact info, flight seat tastes, and dining choices
           </p>
-        </div>
-
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Phase 1 Architecture Note:</strong> Preferences configured here will bind directly
-            to our MongoDB Atlas <code className="bg-brand-100 font-mono px-1 py-0.5 rounded">UserProfile</code>{' '}
-            collection in the upcoming authenticated database phase.
-          </div>
         </div>
 
         <Card className="p-6 sm:p-8">

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Plane, Heart, Shield, Compass, Settings, AlertCircle } from 'lucide-react';
+import { Plane, Heart, Shield, Compass, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 
 export const Dashboard: React.FC = () => {
-  const { user, isFirebaseConfigured } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="bg-slate-50 min-h-screen py-10">
@@ -44,15 +44,6 @@ export const Dashboard: React.FC = () => {
             </Link>
           </div>
         </div>
-
-        {!isFirebaseConfigured && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 flex items-start gap-3">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <strong>Phase 1 Preview Mode:</strong> Firebase Authentication is not yet configured with real API keys in <code className="font-mono bg-amber-100 px-1 py-0.5 rounded">client/.env</code>. Full session persistence will activate once Firebase project settings are applied.
-            </div>
-          </div>
-        )}
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

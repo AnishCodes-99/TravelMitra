@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Plane, Calendar, Users, ArrowRight, Filter, Info, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Plane, Calendar, Users, ArrowRight, Filter, ShieldCheck, AlertCircle } from 'lucide-react';
 import { api } from '../services/api';
 import { FlightItem } from '../types';
 import { Card } from '../components/ui/Card';
@@ -82,16 +82,6 @@ export const Flights: React.FC = () => {
           </Link>
         </div>
 
-        {/* Phase 1 Architecture Notice */}
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Live Flight Search Engine:</strong> Displaying verified domestic flight schedules
-            from our TravelMitra Indian Aviation Engine. Real-time booking checkouts with Razorpay will be
-            unlocked in the upcoming payment & reservation phase.
-          </div>
-        </div>
-
         {/* Main Content: Filters + Flight Results */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Filters */}
@@ -143,14 +133,7 @@ export const Flights: React.FC = () => {
                 ))}
               </div>
 
-              {/* Trust Callout */}
-              <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-1.5">
-                <div className="flex items-center gap-1.5 text-emerald-700 font-semibold">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>DGCA & IATA Verified</span>
-                </div>
-                <p>All fares include mandatory Indian airport charges and passenger service fees.</p>
-              </div>
+
             </Card>
           </div>
 
@@ -295,10 +278,9 @@ export const Flights: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3 bg-brand-50 rounded-xl text-xs text-brand-900 border border-brand-200">
-              ℹ️ <strong>TravelMitra Phase 1 Milestone:</strong> Flight selection verified with client-side
-              validation. Server-side Razorpay payment gateway and passenger seat selection will be
-              integrated in Phase 2 & 3.
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-900 border border-emerald-200 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Best fare guaranteed. 24/7 dedicated Mitra concierge assistance included with your booking.</span>
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">

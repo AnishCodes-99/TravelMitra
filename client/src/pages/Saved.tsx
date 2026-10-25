@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Trash2, ArrowRight, Info } from 'lucide-react';
+import { Heart, Trash2, ArrowRight } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 
 export const Saved: React.FC = () => {
-  const sampleSaved = [
+  const [savedItems, setSavedItems] = useState([
     {
       id: 'goa',
       name: 'Goa Coast & Palolem Beach',
@@ -17,7 +17,7 @@ export const Saved: React.FC = () => {
       notes: 'Gondola ride and ski lessons in January',
       image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=500&q=80',
     },
-  ];
+  ]);
 
   return (
     <div className="bg-slate-50 min-h-screen py-10">
@@ -32,44 +32,47 @@ export const Saved: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Phase 1 Architecture Note:</strong> Wishlists will sync to the{' '}
-            <code className="bg-brand-100 font-mono px-1 py-0.5 rounded">SavedDestination</code>{' '}
-            Mongoose collection once user accounts are signed in.
+        {savedItems.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+            <Heart className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-slate-700">Your wishlist is currently empty</p>
+            <p className="text-xs text-slate-400 mt-1">Explore destinations to save your favorite holiday escapes.</p>
+            <Link to="/destinations" className="inline-block mt-4">
+              <span className="text-xs font-bold text-brand-600 hover:underline">Explore Destinations →</span>
+            </Link>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sampleSaved.map(item => (
-            <Card key={item.id} hoverEffect className="overflow-hidden">
-              <div className="h-44 w-full relative">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-              </div>
-              <div className="p-4 space-y-2">
-                <h3 className="font-bold text-base text-slate-900">{item.name}</h3>
-                <p className="text-xs text-slate-500 italic">"{item.notes}"</p>
-              </div>
-              <div className="p-4 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
-                <Link
-                  to={`/flights?origin=DEL&destination=${item.id.slice(0, 3).toUpperCase()}`}
-                  className="text-xs font-bold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
-                >
-                  <span>Search Flights</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => alert(`Remove "${item.name}" from wishlist.`)}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </Card>
-          ))}
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {savedItems.map(item => (
+              <Card key={item.id} hoverEffect className="overflow-hidden">
+                <div className="h-44 w-full relative">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4 space-y-2">
+                  <h3 className="font-bold text-base text-slate-900">{item.name}</h3>
+                  <p className="text-xs text-slate-500 italic">"{item.notes}"</p>
+                </div>
+                <div className="p-4 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
+                  <Link
+                    to={`/flights?origin=DEL&destination=${item.id.slice(0, 3).toUpperCase()}`}
+                    className="text-xs font-bold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
+                  >
+                    <span>Search Flights</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setSavedItems(prev => prev.filter(i => i.id !== item.id))}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded transition-colors"
+                    title="Remove from Wishlist"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

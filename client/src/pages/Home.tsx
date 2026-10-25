@@ -94,13 +94,14 @@ const FAQS = [
     a: 'Every hotel listed on TravelMitra is vetted for verified guest check-in, transparent cancellation policies, and hygiene standards. If you ever face check-in disputes at the front desk, our 24/7 Mitra support team intervenes immediately or relocates you to a higher-category partner property.',
   },
   {
-    q: 'Are the flights real-time and DGCA/IATA compliant?',
-    a: 'Yes, TravelMitra interfaces directly with verified Indian aviation networks and airline reservation systems, providing live flight inventories from IndiGo, Air India, Vistara, Akasa, and SpiceJet.',
+    q: 'Are flight bookings real-time and confirmed instantly?',
+    a: 'Yes, TravelMitra connects directly with airline reservation systems, providing live schedules and confirmed PNRs for IndiGo, Air India, Vistara, Akasa Air, and SpiceJet.',
   },
 ];
 
 export const Home: React.FC = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [subscribed, setSubscribed] = useState(false);
 
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
@@ -425,20 +426,36 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="w-full md:w-auto shrink-0 flex flex-col sm:flex-row gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              className="px-4 py-3 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 bg-white focus:outline-none focus:ring-2 focus:ring-white min-w-[280px]"
-            />
-            <button
-              type="button"
-              onClick={() => alert('Thank you for subscribing to TravelMitra Club!')}
-              className="px-6 py-3 rounded-xl bg-slate-950 hover:bg-slate-900 text-white font-bold text-sm shadow-md transition-colors"
+          {subscribed ? (
+            <div className="bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-2xl px-6 py-4 flex items-center gap-3">
+              <span className="text-xl">✨</span>
+              <div>
+                <p className="font-bold text-sm">Welcome to the TravelMitra Club!</p>
+                <p className="text-xs text-orange-100">You will now receive secret airfare drops and holiday packages.</p>
+              </div>
+            </div>
+          ) : (
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                setSubscribed(true);
+              }}
+              className="w-full md:w-auto shrink-0 flex flex-col sm:flex-row gap-2"
             >
-              Subscribe
-            </button>
-          </div>
+              <input
+                type="email"
+                required
+                placeholder="Enter your email address"
+                className="px-4 py-3 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 bg-white focus:outline-none focus:ring-2 focus:ring-white min-w-[280px]"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 rounded-xl bg-slate-950 hover:bg-slate-900 text-white font-bold text-sm shadow-md transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+          )}
         </div>
       </section>
     </div>

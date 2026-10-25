@@ -24,7 +24,7 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const Register: React.FC = () => {
-  const { register: registerUser, isFirebaseConfigured, missingConfigKeys } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -60,14 +60,6 @@ export const Register: React.FC = () => {
             Join thousands of Indian travellers enjoying transparent fares & 24/7 care
           </p>
         </div>
-
-        {!isFirebaseConfigured && (
-          <Alert variant="warning" title="Firebase Configuration Required">
-            <p className="text-xs leading-relaxed">
-              Registration requires Firebase credentials in <code className="bg-amber-100 font-mono text-[11px] px-1 py-0.5 rounded">client/.env</code>. Missing keys: {missingConfigKeys.join(', ')}.
-            </p>
-          </Alert>
-        )}
 
         {authError && (
           <Alert variant="error" title="Registration Failed">

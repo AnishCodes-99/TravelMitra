@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Palmtree, Clock, Check, Star, Info } from 'lucide-react';
+import { Palmtree, Clock, Check, Star, ShieldCheck } from 'lucide-react';
 import { api } from '../services/api';
 import { PackageItem } from '../types';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { formatINR } from '../lib/utils';
-
 
 export const Packages: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -17,6 +16,7 @@ export const Packages: React.FC = () => {
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
 
   useEffect(() => {
     document.title = `${destination || 'All'} Holiday Packages — TravelMitra`;
@@ -62,13 +62,6 @@ export const Packages: React.FC = () => {
               Search Other Destinations
             </Button>
           </Link>
-        </div>
-
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Phase 1 Holiday Catalog:</strong> Complete day-wise itineraries, private chauffeur bookings, and customized meal preferences will be configurable in Phase 3.
-          </div>
         </div>
 
         {loading ? (
@@ -133,9 +126,7 @@ export const Packages: React.FC = () => {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() =>
-                      alert(`Inquired about "${pkg.title}". Customization concierge will connect in Phase 3!`)
-                    }
+                    onClick={() => setSelectedPackage(pkg)}
                   >
                     View Details
                   </Button>
@@ -145,6 +136,80 @@ export const Packages: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Package Itinerary & Booking Modal */}
+      {selectedPackage && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-lg text-slate-900">Holiday Package Itinerary</h3>
+              <button
+                onClick={() => setSelectedPackage(null)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="relative h-44 w-full rounded-xl overflow-hidden border border-slate-200">
+                <img
+                  src={selectedPackage.imageUrl}
+                  alt={selectedPackage.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 left-2">
+                  <Badge variant="primary">{selectedPackage.duration}</Badge>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-900 text-base">{selectedPackage.title}</h4>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Departing from {departureCity} • Destination: {selectedPackage.destination}
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                  Package Inclusions:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {selectedPackage.inclusions.map(inc => (
+                    <div key={inc} className="flex items-center gap-1.5 text-xs text-slate-700 bg-slate-50 p-2 rounded-lg">
+                      <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>{inc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between border-t border-slate-200 pt-3">
+                <span className="text-slate-600 font-medium">Starting Fare (per adult):</span>
+                <span className="text-xl font-extrabold text-brand-600">
+                  {formatINR(selectedPackage.pricePerPerson)}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-900 border border-emerald-200 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Mitra Assurance: Private chauffeur, verified hotel vouchers, and 24/7 dedicated support.</span>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setSelectedPackage(null)}>
+                Close
+              </Button>
+              <Link to="/contact">
+                <Button variant="primary" size="sm">
+                  Customize with Travel Mitra
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

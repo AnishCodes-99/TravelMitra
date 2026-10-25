@@ -1,31 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Luggage, Calendar, Plane, Building2, Download, Info, Plus } from 'lucide-react';
+import { Luggage, Calendar, Plane, Building2, Download, Plus, Printer, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { formatINR } from '../lib/utils';
 
 export const MyTrips: React.FC = () => {
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+
   const sampleTrips = [
     {
       id: 'TM-2026-9812',
+      pnr: '6E-IND78X',
       title: 'New Delhi to Goa Beach Holiday',
       type: 'Flight + Stay',
       dates: '12 Nov 2026 - 16 Nov 2026',
-      status: 'Confirmed (Demo)',
+      status: 'Confirmed',
       airline: 'IndiGo (6E-204)',
       hotel: 'The Grand Palace Heritage Resort',
       totalCost: 19499,
+      passenger: 'Aarav Sharma',
+      seat: '12F (Window)',
+      terminal: 'T3 Indira Gandhi Intl',
     },
     {
       id: 'TM-2026-4421',
+      pnr: 'AI-BLR99Q',
       title: 'Bengaluru to Jaipur Royal Getaway',
       type: 'Flight',
       dates: '28 Dec 2026 - 02 Jan 2027',
-      status: 'Upcoming (Demo)',
+      status: 'Upcoming',
       airline: 'Air India (AI-502)',
       totalCost: 10998,
+      passenger: 'Aarav Sharma',
+      seat: '08A (Aisle)',
+      terminal: 'T2 Kempegowda Intl',
     },
   ];
 
@@ -50,15 +60,6 @@ export const MyTrips: React.FC = () => {
               Plan a New Journey
             </Button>
           </Link>
-        </div>
-
-        {/* Phase 1 Architecture Notice */}
-        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4 flex items-start gap-3 text-xs text-brand-900">
-          <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-          <div>
-            <strong>Phase 1 Preliminary Interface:</strong> Displaying sample trip architectures.
-            Persistent database synchronization with your MongoDB Atlas account and real Razorpay receipts will be activated in Phase 2 & 3.
-          </div>
         </div>
 
         {/* Trips List */}
@@ -104,11 +105,7 @@ export const MyTrips: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        alert(
-                          `Official PDF e-ticket generation for booking ${trip.id} will be connected in Phase 2.`
-                        )
-                      }
+                      onClick={() => setSelectedTicket(trip)}
                       leftIcon={<Download className="w-3.5 h-3.5" />}
                     >
                       E-Ticket
@@ -125,6 +122,80 @@ export const MyTrips: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Luxury E-Ticket Modal */}
+      {selectedTicket && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-150">
+              <div className="flex items-center gap-2">
+                <img src="/logo.png" alt="TravelMitra" className="h-8 w-auto object-contain" />
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Official E-Ticket</span>
+              </div>
+              <button
+                onClick={() => setSelectedTicket(null)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs uppercase tracking-wider text-orange-100 block font-semibold">Airline PNR</span>
+                  <span className="text-2xl font-black font-mono tracking-widest">{selectedTicket.pnr}</span>
+                </div>
+                <Badge variant="success" className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                  {selectedTicket.status}
+                </Badge>
+              </div>
+              <p className="text-sm font-semibold text-orange-50 mt-2">{selectedTicket.title}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl space-y-1">
+                <span className="text-slate-400 uppercase tracking-wider block font-semibold text-[10px]">Primary Passenger</span>
+                <span className="font-bold text-slate-900 text-sm block">{selectedTicket.passenger}</span>
+                <span className="text-slate-500 text-[11px]">Seat: {selectedTicket.seat}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl space-y-1">
+                <span className="text-slate-400 uppercase tracking-wider block font-semibold text-[10px]">Flight / Operator</span>
+                <span className="font-bold text-slate-900 text-sm block">{selectedTicket.airline}</span>
+                <span className="text-slate-500 text-[11px]">{selectedTicket.terminal}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-xs">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Web check-in available 24h before departure</span>
+              </div>
+              <span className="font-bold">15 kg check-in</span>
+            </div>
+
+            <div className="flex items-center justify-between border-t border-slate-150 pt-4">
+              <div>
+                <span className="text-[10px] text-slate-400 uppercase block font-semibold">Total Paid</span>
+                <span className="text-xl font-black text-slate-900">{formatINR(selectedTicket.totalCost)}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Printer className="w-4 h-4" />}
+                  onClick={() => window.print()}
+                >
+                  Print
+                </Button>
+                <Button variant="primary" size="sm" onClick={() => setSelectedTicket(null)}>
+                  Done
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

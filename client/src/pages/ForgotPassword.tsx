@@ -16,7 +16,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export const ForgotPassword: React.FC = () => {
-  const { resetPassword, isFirebaseConfigured } = useAuth();
+  const { resetPassword } = useAuth();
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -53,14 +53,6 @@ export const ForgotPassword: React.FC = () => {
             Enter your registered email and we'll send you a password recovery link
           </p>
         </div>
-
-        {!isFirebaseConfigured && (
-          <Alert variant="warning" title="Firebase Required">
-            <p className="text-xs leading-relaxed">
-              Password reset links require active Firebase credentials in <code className="bg-amber-100 font-mono text-[11px] px-1 py-0.5 rounded">client/.env</code>.
-            </p>
-          </Alert>
-        )}
 
         {successMsg && (
           <Alert variant="success" title="Email Sent">

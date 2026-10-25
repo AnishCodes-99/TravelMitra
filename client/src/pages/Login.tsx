@@ -17,7 +17,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
-  const { login, loginWithGoogle, isFirebaseConfigured, missingConfigKeys } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [authError, setAuthError] = useState<string | null>(null);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
@@ -69,20 +69,6 @@ export const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Firebase Config Notice if not configured */}
-        {!isFirebaseConfigured && (
-          <Alert variant="warning" title="Firebase Configuration Notice">
-            <p className="text-xs leading-relaxed">
-              Firebase credentials are not configured yet. Live login requires adding the following
-              keys to <code className="bg-amber-100 font-mono text-[11px] px-1 py-0.5 rounded">client/.env</code>:
-            </p>
-            <ul className="list-disc list-inside mt-2 text-[11px] font-mono space-y-0.5">
-              {missingConfigKeys.map(k => (
-                <li key={k}>{k}</li>
-              ))}
-            </ul>
-          </Alert>
-        )}
 
         {authError && (
           <Alert variant="error" title="Authentication Error">
