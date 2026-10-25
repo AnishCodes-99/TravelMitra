@@ -82,9 +82,7 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-slate-900">Headquarters</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Indiranagar 100ft Road, Bengaluru, Karnataka 560038, India
-                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">India</p>
                 </div>
               </div>
             </Card>
