@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Mail, Lock, Compass, UserPlus } from 'lucide-react';
+import { User, Mail, Lock, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -49,10 +49,10 @@ export const Register: React.FC = () => {
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-slate-200/90 shadow-card">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center text-white mx-auto shadow-md shadow-brand-500/20">
-            <Compass className="w-7 h-7" />
-          </div>
+        <div className="text-center space-y-3">
+          <Link to="/" className="inline-block hover:scale-105 transition-transform">
+            <img src="/logo.png" alt="TravelMitra" className="h-16 w-auto mx-auto object-contain" />
+          </Link>
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Create your Mitra Account
           </h2>

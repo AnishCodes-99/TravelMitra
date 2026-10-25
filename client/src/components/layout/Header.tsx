@@ -10,7 +10,6 @@ import {
   User,
   Menu,
   X,
-  Compass,
   LogOut,
   ChevronDown,
 } from 'lucide-react';
@@ -71,21 +70,20 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
-              <Compass className="w-6 h-6 animate-pulse" />
-            </div>
-            <div>
+          <Link to="/" className="flex items-center gap-3 group py-1">
+            <img
+              src="/logo.png"
+              alt="TravelMitra"
+              className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+            <div className="hidden sm:block border-l border-slate-200 pl-3">
               <div className="flex items-center gap-1.5">
-                <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  Travel<span className="text-brand-500">Mitra</span>
-                </span>
                 <span className="text-[10px] bg-brand-100 text-brand-700 font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                   India
                 </span>
               </div>
-              <p className="text-[11px] font-medium text-slate-500 -mt-1 tracking-wide">
-                Your Trusted Journey Companion
+              <p className="text-[10px] font-semibold text-slate-500 tracking-wide mt-0.5">
+                भारत का अपना ट्रैवल हमसफ़र
               </p>
             </div>
           </Link>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, ShieldCheck, HeartHandshake, PhoneCall, Mail, MapPin } from 'lucide-react';
+import { ShieldCheck, HeartHandshake, PhoneCall, Mail, MapPin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -53,14 +53,9 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center text-white">
-                <Compass className="w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold text-white tracking-tight">
-                Travel<span className="text-brand-500">Mitra</span>
-              </span>
-            </div>
+            <Link to="/" className="inline-block bg-white px-3 py-1.5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <img src="/logo.png" alt="TravelMitra" className="h-10 w-auto object-contain" />
+            </Link>
             <p className="text-xs leading-relaxed text-slate-400 max-w-sm">
               TravelMitra is an Indian travel platform built for effortless domestic and international
               bookings. Discover flights, heritage retreats, and curated holiday itineraries with
