@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Search, Plane, Palmtree } from 'lucide-react';
+import { Search, Plane, Palmtree } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { formatINR } from '../lib/utils';
 

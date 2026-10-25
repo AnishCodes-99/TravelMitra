@@ -53,7 +53,7 @@ const bookingSchema = new Schema<IBooking>(
       required: true,
     },
     passengerOrGuestInfo: {
-      type: [Schema.Types.Mixed],
+      type: [Object],
       default: [],
     },
     price: {

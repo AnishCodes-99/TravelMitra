@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, ShieldCheck, HeartHandshake, Eye, Award } from 'lucide-react';
+import { Compass, ShieldCheck, HeartHandshake, Eye } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 
 export const About: React.FC = () => {

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Plane, Calendar, Users, ArrowRight, Filter, Info, ShieldCheck, AlertCircle } from 'lucide-react';
-import { api } from '../../services/api';
-import { FlightItem } from '../../types';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { formatINR } from '../../lib/utils';
+import { api } from '../services/api';
+import { FlightItem } from '../types';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { formatINR } from '../lib/utils';
+
 
 export const Flights: React.FC = () => {
   const [searchParams] = useSearchParams();

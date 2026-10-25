@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Compass,
   ArrowRight,
   ShieldCheck,
   Clock,
@@ -12,7 +11,6 @@ import {
   Plane,
   Building2,
   Tag,
-  Star,
 } from 'lucide-react';
 import { SearchHero } from '../features/search/SearchHero';
 import { Card } from '../components/ui/Card';

@@ -44,3 +44,9 @@ logs/
 
 # Testing cache
 .vitest/
+
+# Temp folders
+temp_*/
+client/dist/
+server/dist/
+

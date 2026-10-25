@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Palmtree, Clock, Check, Star, Info } from 'lucide-react';
-import { api } from '../../services/api';
-import { PackageItem } from '../../types';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { formatINR } from '../../lib/utils';
+import { api } from '../services/api';
+import { PackageItem } from '../types';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { formatINR } from '../lib/utils';
+
 
 export const Packages: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -112,7 +113,7 @@ export const Packages: React.FC = () => {
                       <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
                         Package Inclusions
                       </span>
-                      {pkg.inclusions.map(inc => (
+                      {pkg.inclusions.map((inc: string) => (
                         <div key={inc} className="flex items-center gap-2 text-xs text-slate-600">
                           <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                           <span>{inc}</span>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { User, Plane, Heart, Shield, Compass, Settings, AlertCircle } from 'lucide-react';
+import { Plane, Heart, Shield, Compass, Settings, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';

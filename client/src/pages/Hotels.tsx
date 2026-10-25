@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Building2, Calendar, Users, Star, MapPin, Check, Info } from 'lucide-react';
-import { api } from '../../services/api';
-import { HotelItem } from '../../types';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { formatINR } from '../../lib/utils';
+import { api } from '../services/api';
+import { HotelItem } from '../types';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { formatINR } from '../lib/utils';
+
 
 export const Hotels: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -131,7 +132,7 @@ export const Hotels: React.FC = () => {
                     </p>
 
                     <div className="mt-3 flex flex-wrap gap-1.5">
-                      {hotel.amenities.map(amenity => (
+                      {hotel.amenities.map((amenity: string) => (
                         <span
                           key={amenity}
                           className="inline-flex items-center gap-1 text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded"
