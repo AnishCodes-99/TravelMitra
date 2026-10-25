@@ -31,10 +31,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build client for GitHub Pages
-        run: npm run build --workspace=client
+        working-directory: client
+        run: node ../node_modules/vite/bin/vite.js build
         env:
           VITE_FIREBASE_API_KEY: AIzaSyCC2nr-dPHMTOqbzjmks2_C7EaUE4Am2ps
           VITE_FIREBASE_AUTH_DOMAIN: travelmitra-46cbd.firebaseapp.com
