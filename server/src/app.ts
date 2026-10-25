@@ -18,6 +18,8 @@ export function createApp(): Express {
     env.FRONTEND_URL,
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'https://travelmitra-46cbd.web.app',
+    'https://travelmitra-46cbd.firebaseapp.com',
   ];
 
   app.use(
