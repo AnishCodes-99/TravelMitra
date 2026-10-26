@@ -25,6 +25,9 @@ export const MyTrips: React.FC = () => {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const activePassengerName =
+    user?.displayName || (user?.email ? user.email.split('@')[0] : 'Mitra Traveler');
+
   const sampleTrips: BookingRecord[] = [
     {
       id: 'TM-2026-9812',
@@ -37,7 +40,7 @@ export const MyTrips: React.FC = () => {
       hotel: 'The Grand Palace Heritage Resort',
       totalCost: 19499,
       currency: 'INR',
-      passenger: user?.displayName || 'Aarav Sharma',
+      passenger: activePassengerName,
       paymentId: 'pay_TM894218742',
       bookedAt: '12 Nov 2026',
       createdAt: new Date().toISOString(),
@@ -52,7 +55,7 @@ export const MyTrips: React.FC = () => {
       airline: 'Air India (AI-502)',
       totalCost: 10998,
       currency: 'INR',
-      passenger: user?.displayName || 'Aarav Sharma',
+      passenger: activePassengerName,
       paymentId: 'pay_TM442199042',
       bookedAt: '28 Dec 2026',
       createdAt: new Date().toISOString(),

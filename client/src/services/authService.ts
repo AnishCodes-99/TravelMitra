@@ -61,4 +61,14 @@ export const authService = {
     }
     return auth.currentUser.getIdToken();
   },
+
+  updateUserProfile: async (displayName?: string, photoURL?: string): Promise<void> => {
+    if (!firebaseStatus.isConfigured || !auth || !auth.currentUser) {
+      return;
+    }
+    await updateProfile(auth.currentUser, {
+      ...(displayName ? { displayName } : {}),
+      ...(photoURL ? { photoURL } : {}),
+    });
+  },
 };

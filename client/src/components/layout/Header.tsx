@@ -124,6 +124,13 @@ export const Header: React.FC = () => {
                       Dashboard
                     </Link>
                     <Link
+                      to="/profile"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      Profile & Preferences
+                    </Link>
+                    <Link
                       to="/my-trips"
                       onClick={() => setUserDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
@@ -209,6 +216,13 @@ export const Header: React.FC = () => {
                     className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-lg"
                   >
                     User Dashboard
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-lg"
+                  >
+                    Profile & Preferences
                   </Link>
                   <button
                     onClick={() => {
