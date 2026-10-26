@@ -137,6 +137,15 @@ export class IndianAviationFlightProvider implements IFlightProvider {
         const depTime = flight.departure?.estimated || flight.departure?.scheduled || '09:00 AM';
         const arrTime = flight.arrival?.estimated || flight.arrival?.scheduled || '11:15 AM';
 
+        const cabinMultiplier =
+          params.cabinClass === 'BUSINESS'
+            ? 2.8
+            : params.cabinClass === 'PREMIUM_ECONOMY'
+            ? 1.6
+            : params.cabinClass === 'FIRST'
+            ? 4.5
+            : 1.0;
+
         return {
           id: `as-${flight.flight?.icao || idx}-${Date.now()}`,
           provider: 'AviationStack (Live)',
@@ -148,8 +157,9 @@ export class IndianAviationFlightProvider implements IFlightProvider {
           arrivalTime: this.formatTimeStr(arrTime),
           duration: '2h 15m',
           stops: 0,
-          price: (3999 + idx * 450) * params.passengers,
+          price: Math.round((3999 + idx * 450) * cabinMultiplier * params.passengers),
           currency: 'INR',
+          cabinClass: params.cabinClass,
           isDemo: false,
         };
       });
@@ -215,6 +225,7 @@ export class IndianAviationFlightProvider implements IFlightProvider {
         stops: idx === 4 ? 1 : 0, // SpiceJet has 1 stop, others non-stop
         price: totalFare,
         currency: 'INR',
+        cabinClass: params.cabinClass,
         isDemo: true,
       };
     });

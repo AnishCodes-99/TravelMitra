@@ -39,6 +39,8 @@ export interface FlightItem {
   stops: number;
   price: number;
   currency: string;
+  cabinClass?: 'ECONOMY' | 'PREMIUM_ECONOMY' | 'BUSINESS' | 'FIRST';
+  seatsAvailable?: number;
   isDemo?: boolean;
 }
 
@@ -77,6 +79,8 @@ export interface DestinationCard {
   startingPrice: number;
   tag: string;
   imageUrl: string;
+  airportCode?: string;
+  cityQuery?: string;
 }
 
 export interface HealthResponse {

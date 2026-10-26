@@ -25,6 +25,7 @@ export interface FlightOffer {
   stops: number;
   price: number;
   currency: string;
+  cabinClass?: 'ECONOMY' | 'PREMIUM_ECONOMY' | 'BUSINESS' | 'FIRST';
   isDemo?: boolean;
 }
 

@@ -29,15 +29,23 @@ type HotelFormValues = z.infer<typeof hotelSchema>;
 
 const POPULAR_HOTEL_CITIES = [
   'Goa',
+  'Delhi',
+  'Mumbai',
   'Jaipur',
   'Udaipur',
+  'Kashmir',
   'Manali',
-  'Mumbai',
+  'Kerala',
   'Bengaluru',
-  'New Delhi',
-  'Ooty',
-  'Shimla',
   'Varanasi',
+  'Kolkata',
+  'Chennai',
+  'Hyderabad',
+  'Agra',
+  'Amritsar',
+  'Ooty',
+  'Andaman',
+  'Rishikesh',
 ];
 
 export const HotelSearchForm: React.FC = () => {
@@ -69,7 +77,7 @@ export const HotelSearchForm: React.FC = () => {
 
   const onSubmit = (data: HotelFormValues) => {
     const params = new URLSearchParams({
-      city: data.city,
+      city: data.city.trim(),
       checkInDate: data.checkInDate,
       checkOutDate: data.checkOutDate,
       rooms: String(data.rooms),
@@ -82,25 +90,28 @@ export const HotelSearchForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
-        {/* Destination / City */}
+        {/* Destination / City - Searchable Input with Datalist */}
         <div className="md:col-span-4">
           <label htmlFor="hotel-city" className="block text-xs font-bold text-slate-500 uppercase mb-1">
             City, Location or Property
           </label>
           <div className="relative">
             <Building2 className="w-5 h-5 absolute left-3 top-3 text-brand-500 pointer-events-none" />
-            <select
+            <input
               id="hotel-city"
+              type="text"
+              list="popular-hotel-cities"
+              placeholder="e.g. Goa, Jaipur, Mumbai, Delhi..."
               {...register('city')}
               className="w-full bg-slate-50/80 hover:bg-slate-100 border border-slate-200 rounded-xl pl-10 pr-3 py-2.5 text-sm font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-            >
-              <option value="">Select destination</option>
+            />
+            <datalist id="popular-hotel-cities">
               {POPULAR_HOTEL_CITIES.map(c => (
                 <option key={c} value={c}>
                   {c}, India
                 </option>
               ))}
-            </select>
+            </datalist>
           </div>
           {errors.city && <p className="text-xs text-rose-600 mt-1">{errors.city.message}</p>}
         </div>
@@ -156,6 +167,7 @@ export const HotelSearchForm: React.FC = () => {
               <option value="1">1 Room, 2 Adults</option>
               <option value="2">2 Rooms, 4 Adults</option>
               <option value="3">3 Rooms, 6 Adults</option>
+              <option value="4">4 Rooms, 8 Adults</option>
             </select>
           </div>
         </div>
@@ -165,12 +177,12 @@ export const HotelSearchForm: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto text-xs text-slate-500">
           <span className="font-semibold text-slate-700 shrink-0">Popular Stays:</span>
-          {['Goa Beach Resorts', 'Jaipur Haveli', 'Manali Cottages'].map(tag => (
+          {['Goa', 'Jaipur', 'Manali', 'Udaipur', 'Kashmir', 'Kerala'].map(tag => (
             <button
               key={tag}
               type="button"
-              onClick={() => setValue('city', tag.split(' ')[0])}
-              className="px-2 py-1 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 rounded-md shrink-0"
+              onClick={() => setValue('city', tag)}
+              className="px-2.5 py-1 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 rounded-md font-medium shrink-0 transition-colors"
             >
               {tag}
             </button>

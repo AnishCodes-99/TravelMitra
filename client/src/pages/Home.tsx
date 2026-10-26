@@ -28,6 +28,8 @@ const POPULAR_DESTINATIONS: DestinationCard[] = [
     startingPrice: 3899,
     tag: 'Beach & Nightlife',
     imageUrl: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'GOI',
+    cityQuery: 'Goa',
   },
   {
     id: 'jaipur',
@@ -37,6 +39,8 @@ const POPULAR_DESTINATIONS: DestinationCard[] = [
     startingPrice: 3200,
     tag: 'Heritage & Culture',
     imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'JAI',
+    cityQuery: 'Jaipur',
   },
   {
     id: 'kerala',
@@ -46,6 +50,8 @@ const POPULAR_DESTINATIONS: DestinationCard[] = [
     startingPrice: 5499,
     tag: 'Nature & Wellness',
     imageUrl: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'COK',
+    cityQuery: 'Kerala',
   },
   {
     id: 'kashmir',
@@ -55,15 +61,19 @@ const POPULAR_DESTINATIONS: DestinationCard[] = [
     startingPrice: 6200,
     tag: 'Snow & Adventure',
     imageUrl: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'SXR',
+    cityQuery: 'Kashmir',
   },
   {
     id: 'manali',
-    name: 'Manali',
+    name: 'Manali & Shimla',
     state: 'Himachal Pradesh',
     tagline: 'Pine forests, Solang valley adventures & cozy mountain chalets',
     startingPrice: 2800,
     tag: 'Hill Station',
     imageUrl: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'DEL',
+    cityQuery: 'Manali',
   },
   {
     id: 'varanasi',
@@ -73,6 +83,8 @@ const POPULAR_DESTINATIONS: DestinationCard[] = [
     startingPrice: 3100,
     tag: 'Spiritual Circuit',
     imageUrl: 'https://images.unsplash.com/photo-1561359313-0639aad49ca6?auto=format&fit=crop&w=800&q=80',
+    airportCode: 'DEL',
+    cityQuery: 'Varanasi',
   },
 ];
 
@@ -168,18 +180,24 @@ export const Home: React.FC = () => {
                     {formatINR(dest.startingPrice)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   <Link
-                    to={`/flights?origin=DEL&destination=${dest.id.slice(0, 3).toUpperCase()}`}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-50 hover:text-brand-600 transition-colors"
+                    to={`/flights?origin=DEL&destination=${dest.airportCode || 'GOI'}`}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-50 hover:text-brand-600 transition-colors"
                   >
                     Flights
                   </Link>
                   <Link
-                    to={`/packages?destination=${encodeURIComponent(dest.name)}`}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors"
+                    to={`/hotels?city=${encodeURIComponent(dest.cityQuery || dest.name)}`}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 transition-colors"
                   >
-                    Packages
+                    Stays
+                  </Link>
+                  <Link
+                    to={`/packages?destination=${encodeURIComponent(dest.cityQuery || dest.name)}`}
+                    className="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors"
+                  >
+                    Tours
                   </Link>
                 </div>
               </div>
