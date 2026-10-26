@@ -13,6 +13,8 @@ import {
 import { formatINR } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { useAuth } from '../../context/AuthContext';
+import { firestoreService, BookingRecord } from '../../services/firestoreService';
 
 export interface BookingPaymentItem {
   id: string;
@@ -39,6 +41,7 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
   onPaymentSuccess,
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'netbanking'>('upi');
   const [upiId, setUpiId] = useState('user@okhdfcbank');
   const [cardNumber, setCardNumber] = useState('4532 8921 7741 9924');
@@ -64,10 +67,12 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
       setPnr(generatedPnr);
       setStage('success');
 
-      // Persist to localStorage for My Trips
-      const newBooking = {
+      // Persist to Firestore and local backup
+      const newBooking: BookingRecord = {
         id: generatedPnr,
         pnr: generatedPnr,
+        userId: user?.uid,
+        userEmail: user?.email || undefined,
         title: bookingItem.title,
         type: bookingItem.type === 'flight' ? 'Flight' : bookingItem.type === 'hotel' ? 'Hotel' : 'Holiday Package',
         dates: bookingItem.details.find(d => d.label.toLowerCase().includes('date'))?.value || 'Upcoming Journey',
@@ -75,17 +80,18 @@ export const RazorpayModal: React.FC<RazorpayModalProps> = ({
         airline: bookingItem.type === 'flight' ? bookingItem.subtitle : undefined,
         hotel: bookingItem.type === 'hotel' ? bookingItem.title : undefined,
         totalCost: bookingItem.price,
-        passenger: cardName || 'Aarav Sharma',
+        currency: 'INR',
+        passenger: cardName || user?.displayName || user?.email?.split('@')[0] || 'Aarav Sharma',
         paymentId: generatedPaymentId,
         bookedAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+        createdAt: new Date().toISOString(),
+        details: bookingItem.details,
       };
 
-      try {
-        const existing = JSON.parse(localStorage.getItem('travelmitra_user_bookings') || '[]');
-        localStorage.setItem('travelmitra_user_bookings', JSON.stringify([newBooking, ...existing]));
-      } catch (err) {
-        console.error('Failed to save to localStorage:', err);
-      }
+      // Save to Firestore database & local storage
+      firestoreService.saveBooking(newBooking).catch(err => {
+        console.warn('Could not save booking to Firestore:', err);
+      });
 
       if (onPaymentSuccess) {
         onPaymentSuccess(newBooking);

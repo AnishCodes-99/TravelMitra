@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { authService } from '../services/authService';
+import { firestoreService } from '../services/firestoreService';
 import { auth, firebaseStatus } from '../lib/firebase';
 
 interface AuthContextType {
@@ -28,8 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser: User | null) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
       setUser(currentUser);
+      if (currentUser) {
+        // Save user login & profile info to Firestore 'users' collection
+        await firestoreService.saveUserProfile(currentUser);
+      }
       setLoading(false);
     });
 

@@ -33,6 +33,7 @@ declare module 'firebase/auth' {
     email: string | null;
     displayName: string | null;
     photoURL?: string | null;
+    phoneNumber?: string | null;
     getIdToken(forceRefresh?: boolean): Promise<string>;
   }
   export interface Auth {
@@ -50,6 +51,51 @@ declare module 'firebase/auth' {
   export function sendPasswordResetEmail(auth: Auth, email: string): Promise<void>;
   export function updateProfile(user: User, profile: { displayName?: string; photoURL?: string }): Promise<void>;
   export function onAuthStateChanged(auth: Auth, nextOrObserver: (user: User | null) => any): () => void;
+}
+
+declare module 'firebase/firestore' {
+  export interface Firestore {
+    app: any;
+    type: string;
+  }
+  export interface DocumentReference<T = any> {
+    id: string;
+    path: string;
+  }
+  export interface CollectionReference<T = any> {
+    id: string;
+    path: string;
+  }
+  export interface Query<T = any> {}
+  export interface DocumentSnapshot<T = any> {
+    id: string;
+    exists(): boolean;
+    data(): T | undefined;
+  }
+  export interface QueryDocumentSnapshot<T = any> extends DocumentSnapshot<T> {
+    data(): T;
+  }
+  export interface QuerySnapshot<T = any> {
+    docs: QueryDocumentSnapshot<T>[];
+    size: number;
+    empty: boolean;
+    forEach(callback: (result: QueryDocumentSnapshot<T>) => void): void;
+  }
+
+  export function getFirestore(app?: any): Firestore;
+  export function doc(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference;
+  export function collection(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference;
+  export function getDoc(reference: DocumentReference): Promise<DocumentSnapshot>;
+  export function setDoc(
+    reference: DocumentReference,
+    data: Record<string, any>,
+    options?: { merge?: boolean }
+  ): Promise<void>;
+  export function query(query: CollectionReference | Query, ...queryConstraints: any[]): Query;
+  export function where(fieldPath: string, opStr: string, value: any): any;
+  export function orderBy(fieldPath: string, directionStr?: 'asc' | 'desc'): any;
+  export function limit(limit: number): any;
+  export function getDocs(query: Query | CollectionReference): Promise<QuerySnapshot>;
 }
 
 declare module 'vitest' {

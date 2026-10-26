@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 export interface FirebaseConfigValidation {
   isConfigured: boolean;
@@ -30,19 +31,21 @@ export const firebaseStatus = checkFirebaseConfig();
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let db: Firestore | null = null;
 
 if (firebaseStatus.isConfigured) {
   try {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
+    db = getFirestore(app);
   } catch (error) {
-    console.warn('Failed to initialize Firebase App:', error);
+    console.warn('Failed to initialize Firebase App / Firestore:', error);
   }
 } else {
   // Graceful notification without throwing or breaking the frontend
   console.info(
-    'Firebase Authentication is running in unconfigured mode. Set VITE_FIREBASE_* variables in client/.env to enable live authentication.'
+    'Firebase Authentication & Firestore are running in unconfigured mode. Set VITE_FIREBASE_* variables in client/.env to enable live services.'
   );
 }
 
-export { app, auth };
+export { app, auth, db };

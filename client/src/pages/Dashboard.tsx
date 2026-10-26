@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plane, Heart, Shield, Compass, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { firestoreService, BookingRecord } from '../services/firestoreService';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const [tripCount, setTripCount] = useState<number>(2);
+  const [recentTrips, setRecentTrips] = useState<BookingRecord[]>([]);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const bookings = await firestoreService.getUserBookings(user?.uid, user?.email || undefined);
+        if (bookings.length > 0) {
+          setTripCount(bookings.length);
+          setRecentTrips(bookings.slice(0, 3));
+        }
+      } catch (err) {
+        console.warn('Error loading dashboard stats:', err);
+      }
+    }
+    loadStats();
+  }, [user]);
 
   return (
     <div className="bg-slate-50 min-h-screen py-10">
@@ -52,7 +70,7 @@ export const Dashboard: React.FC = () => {
               <span className="text-xs font-bold uppercase tracking-wider">Booked Trips</span>
               <Plane className="w-5 h-5 text-brand-500" />
             </div>
-            <div className="text-3xl font-extrabold text-slate-900">2</div>
+            <div className="text-3xl font-extrabold text-slate-900">{tripCount}</div>
             <Link to="/my-trips" className="text-xs text-brand-600 font-semibold hover:underline block">
               View upcoming itineraries →
             </Link>
@@ -82,26 +100,49 @@ export const Dashboard: React.FC = () => {
         {/* Quick Links Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-6 space-y-3">
-            <h3 className="font-bold text-base text-slate-900">Recent Booking References</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-base text-slate-900">Recent Booking References</h3>
+              <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">
+                Firestore DB Live
+              </span>
+            </div>
             <div className="space-y-2 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="font-bold text-slate-800 block">DEL → GOI (IndiGo 6E-204)</span>
-                  <span className="text-slate-400">12 Nov 2026 • Confirmed</span>
-                </div>
-                <Link to="/my-trips" className="text-brand-600 font-bold hover:underline">
-                  Manage
-                </Link>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="font-bold text-slate-800 block">BLR → JAI (Air India AI-502)</span>
-                  <span className="text-slate-400">28 Dec 2026 • Upcoming</span>
-                </div>
-                <Link to="/my-trips" className="text-brand-600 font-bold hover:underline">
-                  Manage
-                </Link>
-              </div>
+              {recentTrips.length > 0 ? (
+                recentTrips.map(trip => (
+                  <div key={trip.id} className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-slate-800 block">{trip.title}</span>
+                      <span className="text-slate-400">
+                        {trip.dates} • {trip.status} ({trip.pnr})
+                      </span>
+                    </div>
+                    <Link to="/my-trips" className="text-brand-600 font-bold hover:underline">
+                      Manage
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-slate-800 block">DEL → GOI (IndiGo 6E-204)</span>
+                      <span className="text-slate-400">12 Nov 2026 • Confirmed</span>
+                    </div>
+                    <Link to="/my-trips" className="text-brand-600 font-bold hover:underline">
+                      Manage
+                    </Link>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-slate-800 block">BLR → JAI (Air India AI-502)</span>
+                      <span className="text-slate-400">28 Dec 2026 • Upcoming</span>
+                    </div>
+                    <Link to="/my-trips" className="text-brand-600 font-bold hover:underline">
+                      Manage
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </Card>
 
