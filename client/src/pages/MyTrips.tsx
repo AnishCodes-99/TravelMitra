@@ -25,60 +25,23 @@ export const MyTrips: React.FC = () => {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const activePassengerName =
-    user?.displayName || (user?.email ? user.email.split('@')[0] : 'Mitra Traveler');
-
-  const sampleTrips: BookingRecord[] = [
-    {
-      id: 'TM-2026-9812',
-      pnr: '6E-IND78X',
-      title: 'New Delhi to Goa Beach Holiday',
-      type: 'Flight',
-      dates: '12 Nov 2026 - 16 Nov 2026',
-      status: 'Confirmed',
-      airline: 'IndiGo (6E-204)',
-      hotel: 'The Grand Palace Heritage Resort',
-      totalCost: 19499,
-      currency: 'INR',
-      passenger: activePassengerName,
-      paymentId: 'pay_TM894218742',
-      bookedAt: '12 Nov 2026',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'TM-2026-4421',
-      pnr: 'AI-BLR99Q',
-      title: 'Bengaluru to Jaipur Royal Getaway',
-      type: 'Flight',
-      dates: '28 Dec 2026 - 02 Jan 2027',
-      status: 'Confirmed',
-      airline: 'Air India (AI-502)',
-      totalCost: 10998,
-      currency: 'INR',
-      passenger: activePassengerName,
-      paymentId: 'pay_TM442199042',
-      bookedAt: '28 Dec 2026',
-      createdAt: new Date().toISOString(),
-    },
-  ];
-
   const fetchTrips = async () => {
     try {
       setLoading(true);
+      if (!user) {
+        setBookings([]);
+        return;
+      }
       const userBookings = await firestoreService.getUserBookings(
-        user?.uid,
-        user?.email || undefined
+        user.uid,
+        user.email || undefined
       );
 
-      // Combine user bookings with starter sample trips if no bookings yet
-      if (userBookings.length > 0) {
-        setBookings(userBookings);
-      } else {
-        setBookings(sampleTrips);
-      }
+      // Strictly set actual user bookings (new user has 0 bookings)
+      setBookings(userBookings || []);
     } catch (err) {
       console.warn('Error loading bookings:', err);
-      setBookings(sampleTrips);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
