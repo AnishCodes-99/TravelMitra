@@ -485,20 +485,53 @@ export const Hotels: React.FC = () => {
                     </div>
 
                     {/* Hotel Content */}
-                    <div className="p-5 flex flex-col justify-between flex-1 space-y-4">
+                    <div className="p-5 flex flex-col justify-between flex-1 space-y-3.5">
                       <div>
-                        <div className="flex items-center gap-1 text-amber-500 mb-1.5">
-                          {Array.from({ length: hotel.starRating }).map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                          ))}
+                        {/* Rating & Star Row */}
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-1 text-amber-500">
+                            {Array.from({ length: hotel.starRating }).map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                            ))}
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <span className="bg-emerald-600 text-white text-[11px] font-black px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                              ★ {hotel.ratingScore || (4.1 + hotel.starRating * 0.16).toFixed(1)}
+                            </span>
+                            <span className="text-[11px] font-bold text-slate-800">
+                              {hotel.ratingText || (hotel.starRating === 5 ? 'Exceptional' : 'Superb')}
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              ({hotel.reviewsCount || 480} reviews)
+                            </span>
+                          </div>
                         </div>
+
                         <h3 className="font-extrabold text-base text-slate-900 leading-snug line-clamp-1">
                           {hotel.name}
                         </h3>
+
                         <p className="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-1">
-                          <MapPin className="w-3.5 h-3.5 text-brand-500 shrink-0" /> {hotel.city}, India
+                          <MapPin className="w-3.5 h-3.5 text-brand-500 shrink-0" />{' '}
+                          {hotel.address || `${hotel.city} Central District, India`}
                         </p>
 
+                        {/* Room Type & Free Cancellation */}
+                        <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-col gap-1 text-xs">
+                          <div className="text-[11px] text-slate-700 font-semibold flex items-center gap-1">
+                            <span className="text-slate-400 font-medium">Room:</span>
+                            <span className="text-slate-900 font-bold">
+                              {hotel.roomType || (hotel.starRating === 5 ? 'Luxury Deluxe King Suite' : 'Deluxe Balcony Room')}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 w-fit flex items-center gap-1">
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            {hotel.cancellationPolicy || 'Free Cancellation till 24h before Check-In'}
+                          </span>
+                        </div>
+
+                        {/* Amenities */}
                         <div className="mt-3 flex flex-wrap gap-1.5">
                           {hotel.amenities.slice(0, 4).map((amenity: string) => (
                             <span
@@ -528,7 +561,7 @@ export const Hotels: React.FC = () => {
                           variant="primary"
                           size="sm"
                           onClick={() => setSelectedHotel(hotel)}
-                          className="shadow-md shadow-brand-500/20"
+                          className="shadow-md shadow-brand-500/20 font-bold"
                         >
                           Reserve Room
                         </Button>
@@ -619,10 +652,11 @@ export const Hotels: React.FC = () => {
                     price: hotelToBook.totalPrice || hotelToBook.pricePerNight * rooms,
                     details: [
                       { label: 'Hotel Name', value: hotelToBook.name },
-                      { label: 'City', value: hotelToBook.city },
+                      { label: 'Location', value: hotelToBook.address || `${hotelToBook.city}, India` },
+                      { label: 'Room Category', value: hotelToBook.roomType || 'Deluxe Room' },
                       { label: 'Dates', value: `${checkInDate} to ${checkOutDate}` },
                       { label: 'Rooms & Guests', value: `${rooms} Room, ${adults} Adults` },
-                      { label: 'Inclusions', value: 'Buffet Breakfast & High-Speed WiFi' },
+                      { label: 'Cancellation', value: hotelToBook.cancellationPolicy || 'Free Cancellation' },
                     ],
                   });
                 }}

@@ -55,6 +55,12 @@ export interface HotelItem {
   currency: string;
   amenities: string[];
   imageUrl?: string;
+  address?: string;
+  ratingScore?: number;
+  ratingText?: string;
+  reviewsCount?: number;
+  roomType?: string;
+  cancellationPolicy?: string;
   isDemo?: boolean;
 }
 

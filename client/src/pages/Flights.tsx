@@ -67,10 +67,10 @@ export const Flights: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [paymentItem, setPaymentItem] = useState<BookingPaymentItem | null>(null);
 
-  // Filter states
-  const [selectedStops, setSelectedStops] = useState<number[]>([0, 1]);
+  // Filter states (empty array means all/unfiltered)
+  const [selectedStops, setSelectedStops] = useState<number[]>([]);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
-  const [maxPrice, setMaxPrice] = useState<number>(50000);
+  const [maxPrice, setMaxPrice] = useState<number>(80000);
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'duration' | 'departure'>('price-asc');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
@@ -91,10 +91,10 @@ export const Flights: React.FC = () => {
         });
         setRawFlights(res.data);
 
-        // Initialize price slider ceiling to highest returned price + 1000
+        // Auto-scale price slider ceiling to highest returned price for this class
         if (res.data.length > 0) {
           const highest = Math.max(...res.data.map(f => f.price));
-          setMaxPrice(highest + 500);
+          setMaxPrice(highest + 1000);
         }
       } catch (err) {
         setError((err as Error).message);
@@ -112,6 +112,43 @@ export const Flights: React.FC = () => {
     rawFlights.forEach(f => set.add(f.airline));
     return Array.from(set);
   }, [rawFlights]);
+
+  // Dynamic lowest prices per stop option (Non-stop vs 1 Stop)
+  const stopPrices = useMemo(() => {
+    let nonStopMin: number | null = null;
+    let oneStopMin: number | null = null;
+    rawFlights.forEach(f => {
+      if (f.stops === 0 && (nonStopMin === null || f.price < nonStopMin)) {
+        nonStopMin = f.price;
+      }
+      if (f.stops === 1 && (oneStopMin === null || f.price < oneStopMin)) {
+        oneStopMin = f.price;
+      }
+    });
+    return { nonStop: nonStopMin, oneStop: oneStopMin };
+  }, [rawFlights]);
+
+  // Dynamic lowest price per airline
+  const airlinePrices = useMemo(() => {
+    const map: Record<string, number> = {};
+    rawFlights.forEach(f => {
+      if (!map[f.airline] || f.price < map[f.airline]) {
+        map[f.airline] = f.price;
+      }
+    });
+    return map;
+  }, [rawFlights]);
+
+  // Starting fares per cabin class for comparison
+  const classStartingPrices = useMemo(() => {
+    const baseMin = 4199;
+    return {
+      ECONOMY: Math.round(baseMin * 1.0 * passengers),
+      PREMIUM_ECONOMY: Math.round(baseMin * 1.6 * passengers),
+      BUSINESS: Math.round(baseMin * 2.8 * passengers),
+      FIRST: Math.round(baseMin * 4.5 * passengers),
+    };
+  }, [passengers]);
 
   // Handle live search update from the sidebar search box
   const handleApplySearch = (e: React.FormEvent) => {
@@ -131,7 +168,7 @@ export const Flights: React.FC = () => {
     setSearchParams(params);
   };
 
-  // Quick class toggle handler
+  // Instant class toggle handler
   const handleClassChange = (newClass: 'ECONOMY' | 'PREMIUM_ECONOMY' | 'BUSINESS' | 'FIRST') => {
     setModCabinClass(newClass);
     const params = new URLSearchParams(searchParams);
@@ -143,11 +180,11 @@ export const Flights: React.FC = () => {
   const filteredFlights = useMemo(() => {
     return rawFlights
       .filter(flight => {
-        // Stops filter
+        // Stops filter: If specific stops selected, match them
         if (selectedStops.length > 0 && !selectedStops.includes(flight.stops)) {
           return false;
         }
-        // Airlines filter
+        // Airlines filter: If specific airlines selected, match them
         if (selectedAirlines.length > 0 && !selectedAirlines.includes(flight.airline)) {
           return false;
         }
@@ -167,11 +204,11 @@ export const Flights: React.FC = () => {
   }, [rawFlights, selectedStops, selectedAirlines, maxPrice, sortBy]);
 
   const handleResetFilters = () => {
-    setSelectedStops([0, 1]);
+    setSelectedStops([]);
     setSelectedAirlines([]);
     if (rawFlights.length > 0) {
       const highest = Math.max(...rawFlights.map(f => f.price));
-      setMaxPrice(highest + 500);
+      setMaxPrice(highest + 1000);
     }
     setSortBy('price-asc');
   };
@@ -314,13 +351,17 @@ export const Flights: React.FC = () => {
                   <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Cabin Class</label>
                   <select
                     value={modCabinClass}
-                    onChange={e => setModCabinClass(e.target.value as any)}
+                    onChange={e => {
+                      const val = e.target.value as any;
+                      setModCabinClass(val);
+                      handleClassChange(val);
+                    }}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-brand-500"
                   >
-                    <option value="ECONOMY">Economy (Standard Fare)</option>
-                    <option value="PREMIUM_ECONOMY">Premium Economy (Extra Legroom)</option>
-                    <option value="BUSINESS">Business Class (Lie-Flat & Lounge)</option>
-                    <option value="FIRST">First Class (VIP Royal Suite)</option>
+                    <option value="ECONOMY">Economy (from {formatINR(classStartingPrices.ECONOMY)})</option>
+                    <option value="PREMIUM_ECONOMY">Premium Economy (from {formatINR(classStartingPrices.PREMIUM_ECONOMY)})</option>
+                    <option value="BUSINESS">Business Class (from {formatINR(classStartingPrices.BUSINESS)})</option>
+                    <option value="FIRST">First Class (from {formatINR(classStartingPrices.FIRST)})</option>
                   </select>
                 </div>
 
@@ -351,21 +392,32 @@ export const Flights: React.FC = () => {
                   Compare Cabin Class
                 </span>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {(['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'] as const).map(cls => (
+                  {(
+                    [
+                      { id: 'ECONOMY', label: 'Economy' },
+                      { id: 'PREMIUM_ECONOMY', label: 'Prem. Economy' },
+                      { id: 'BUSINESS', label: 'Business' },
+                      { id: 'FIRST', label: 'First Class' },
+                    ] as const
+                  ).map(item => (
                     <button
-                      key={cls}
+                      key={item.id}
                       type="button"
-                      onClick={() => handleClassChange(cls)}
-                      className={`px-2 py-1.5 rounded-lg text-[11px] font-bold text-left transition-all ${
-                        cabinClass === cls
-                          ? 'bg-brand-500 text-white shadow-sm'
+                      onClick={() => handleClassChange(item.id)}
+                      className={`p-2 rounded-xl text-left transition-all ${
+                        cabinClass === item.id
+                          ? 'bg-brand-500 text-white shadow-md shadow-brand-500/30'
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      {cls === 'ECONOMY' && 'Economy'}
-                      {cls === 'PREMIUM_ECONOMY' && 'Prem. Economy'}
-                      {cls === 'BUSINESS' && 'Business'}
-                      {cls === 'FIRST' && 'First Class'}
+                      <div className="text-[11px] font-extrabold">{item.label}</div>
+                      <div
+                        className={`text-[10px] mt-0.5 font-bold ${
+                          cabinClass === item.id ? 'text-brand-100' : 'text-emerald-600'
+                        }`}
+                      >
+                        from {formatINR(classStartingPrices[item.id])}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -373,39 +425,61 @@ export const Flights: React.FC = () => {
 
               {/* Stops Filter */}
               <div>
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-                  Flight Stops
-                </span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Stops
+                  </span>
+                  {selectedStops.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedStops([])}
+                      className="text-[11px] font-bold text-brand-600 hover:underline"
+                    >
+                      Show All
+                    </button>
+                  )}
+                </div>
                 <div className="space-y-2">
-                  <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer hover:text-slate-900">
+                  <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer hover:text-slate-900 group">
                     <span className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={selectedStops.includes(0)}
                         onChange={e => {
-                          if (e.target.checked) setSelectedStops([...selectedStops, 0]);
-                          else setSelectedStops(selectedStops.filter(s => s !== 0));
+                          if (e.target.checked) {
+                            setSelectedStops(prev => [...prev.filter(s => s !== 0), 0]);
+                          } else {
+                            setSelectedStops(prev => prev.filter(s => s !== 0));
+                          }
                         }}
-                        className="rounded text-brand-500 focus:ring-brand-500"
+                        className="w-4 h-4 rounded text-brand-500 focus:ring-brand-500"
                       />
-                      <span>Non-Stop Only</span>
+                      <span className="font-semibold group-hover:text-brand-600">Non-Stop Only</span>
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-600">Fastest</span>
+                    <span className="text-[11px] font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
+                      {stopPrices.nonStop ? formatINR(stopPrices.nonStop) : '₹4,499'}
+                    </span>
                   </label>
-                  <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer hover:text-slate-900">
+
+                  <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer hover:text-slate-900 group">
                     <span className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={selectedStops.includes(1)}
                         onChange={e => {
-                          if (e.target.checked) setSelectedStops([...selectedStops, 1]);
-                          else setSelectedStops(selectedStops.filter(s => s !== 1));
+                          if (e.target.checked) {
+                            setSelectedStops(prev => [...prev.filter(s => s !== 1), 1]);
+                          } else {
+                            setSelectedStops(prev => prev.filter(s => s !== 1));
+                          }
                         }}
-                        className="rounded text-brand-500 focus:ring-brand-500"
+                        className="w-4 h-4 rounded text-brand-500 focus:ring-brand-500"
                       />
-                      <span>1 Stop</span>
+                      <span className="font-semibold group-hover:text-brand-600">1 Stop</span>
                     </span>
-                    <span className="text-[11px] text-slate-400">Connecting</span>
+                    <span className="text-[11px] font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
+                      {stopPrices.oneStop ? formatINR(stopPrices.oneStop) : '₹5,100'}
+                    </span>
                   </label>
                 </div>
               </div>
@@ -413,37 +487,61 @@ export const Flights: React.FC = () => {
               {/* Airline Filter */}
               {availableAirlines.length > 0 && (
                 <div>
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-                    Airlines ({availableAirlines.length})
-                  </span>
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Airlines ({availableAirlines.length})
+                    </span>
+                    {selectedAirlines.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedAirlines([])}
+                        className="text-[11px] font-bold text-brand-600 hover:underline"
+                      >
+                        All
+                      </button>
+                    )}
+                  </div>
+                  <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                     {availableAirlines.map(airline => {
-                      const isChecked = selectedAirlines.length === 0 || selectedAirlines.includes(airline);
+                      const isChecked = selectedAirlines.includes(airline);
+                      const minPrice = airlinePrices[airline];
                       return (
-                        <label
+                        <div
                           key={airline}
-                          className="flex items-center justify-between text-xs text-slate-700 cursor-pointer hover:text-slate-900"
+                          className="flex items-center justify-between text-xs text-slate-700 hover:text-slate-900 py-0.5"
                         >
-                          <span className="flex items-center gap-2">
+                          <label className="flex items-center gap-2 cursor-pointer grow">
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onChange={e => {
                                 if (e.target.checked) {
-                                  setSelectedAirlines([...selectedAirlines, airline]);
+                                  setSelectedAirlines(prev => [...prev, airline]);
                                 } else {
-                                  if (selectedAirlines.length === 0) {
-                                    setSelectedAirlines(availableAirlines.filter(a => a !== airline));
-                                  } else {
-                                    setSelectedAirlines(selectedAirlines.filter(a => a !== airline));
-                                  }
+                                  setSelectedAirlines(prev => prev.filter(a => a !== airline));
                                 }
                               }}
-                              className="rounded text-brand-500 focus:ring-brand-500"
+                              className="w-4 h-4 rounded text-brand-500 focus:ring-brand-500"
                             />
-                            <span>{airline}</span>
-                          </span>
-                        </label>
+                            <span className="font-medium">{airline}</span>
+                          </label>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {minPrice && (
+                              <span className="text-[11px] font-bold text-slate-700">
+                                {formatINR(minPrice)}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setSelectedAirlines([airline])}
+                              className="text-[10px] uppercase font-bold text-brand-600 hover:bg-brand-50 px-1.5 py-0.5 rounded transition"
+                              title={`Show only ${airline}`}
+                            >
+                              only
+                            </button>
+                          </div>
+                        </div>
                       );
                     })}
                   </div>

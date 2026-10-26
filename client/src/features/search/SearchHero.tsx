@@ -48,15 +48,15 @@ export const SearchHero: React.FC = () => {
 
   return (
     <div className="relative pt-10 pb-16 md:pt-14 md:pb-24 overflow-hidden">
-      {/* Background authentic travel image with subtle light overlay and soft atmospheric blur */}
+      {/* Background authentic luxury hotel resort image with soft light overlay for crystal-clear text contrast */}
       <div className="absolute inset-0 -z-20 overflow-hidden">
         <img
           src={getTabBackgroundImage()}
-          alt="TravelMitra Scenic Backdrop"
-          className="w-full h-full object-cover object-center opacity-15 scale-105 transition-all duration-700 ease-out"
+          alt="Luxury Resort Backdrop"
+          className="w-full h-full object-cover object-center opacity-10 scale-105 transition-all duration-700 ease-out"
         />
         {/* Soft elegant gradient overlays for perfect text contrast and modern polish */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-slate-50/70 to-slate-50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/95" />
         <div className="absolute top-0 right-10 w-[500px] h-[500px] bg-brand-400/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-20 left-10 w-[450px] h-[450px] bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />
       </div>

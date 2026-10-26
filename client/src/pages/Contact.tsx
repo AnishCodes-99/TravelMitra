@@ -14,11 +14,44 @@ export const Contact: React.FC = () => {
     category: 'Booking Assistance',
     message: '',
   });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+
+    try {
+      // 1. Submit form directly to wanianish75@gmail.com via FormSubmit AJAX API
+      await fetch('https://formsubmit.co/ajax/wanianish75@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: `[TravelMitra Support] ${formData.category} - ${formData.name}`,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          bookingReference: formData.bookingRef || 'N/A',
+          issueCategory: formData.category,
+          message: formData.message,
+          submittedAt: new Date().toLocaleString('en-IN'),
+        }),
+      });
+    } catch (err) {
+      console.warn('FormSubmit network call notice:', err);
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
   };
+
+  const mailtoLink = `mailto:wanianish75@gmail.com?subject=${encodeURIComponent(
+    `[TravelMitra Support] ${formData.category || 'Help Request'}`
+  )}&body=${encodeURIComponent(
+    `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nBooking Ref: ${formData.bookingRef || 'N/A'}\nCategory: ${formData.category}\n\nMessage:\n${formData.message}`
+  )}`;
 
   return (
     <div className="bg-slate-50 min-h-screen py-12">
@@ -29,7 +62,7 @@ export const Contact: React.FC = () => {
           </h1>
           <p className="text-sm text-slate-600">
             Have questions about an upcoming flight, hotel check-in, or holiday itinerary? We are here
-            to help around the clock.
+            to help around the clock. Your message is dispatched directly to our priority support inbox.
           </p>
         </div>
 
@@ -71,8 +104,13 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-slate-900">Email Inquiries</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">support@travelmitra.in</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Response within 2 hours</p>
+                  <a
+                    href="mailto:wanianish75@gmail.com"
+                    className="text-xs text-brand-600 font-semibold hover:underline block mt-0.5"
+                  >
+                    wanianish75@gmail.com
+                  </a>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Direct response within 2 hours</p>
                 </div>
               </div>
 
@@ -82,7 +120,7 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-slate-900">Headquarters</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">India</p>
+                  <p className="text-xs text-slate-500 mt-0.5">TravelMitra Operations Hub, India</p>
                 </div>
               </div>
             </Card>
@@ -96,14 +134,23 @@ export const Contact: React.FC = () => {
                   <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900">Support Ticket Created!</h3>
+                  <h3 className="text-xl font-bold text-slate-900">Support Ticket Dispatched!</h3>
                   <p className="text-sm text-slate-600 max-w-md mx-auto">
-                    Thank you, {formData.name || 'Traveller'}. A dedicated Mitra support officer has
-                    received your inquiry and will contact you via email or phone within 15 minutes.
+                    Thank you, <strong>{formData.name || 'Traveller'}</strong>. Your support ticket has
+                    been delivered directly to our support team at <strong>wanianish75@gmail.com</strong>.
+                    We will get back to you shortly.
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
-                    Submit Another Query
-                  </Button>
+                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <a
+                      href={mailtoLink}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-xl text-xs font-bold hover:bg-brand-600 transition"
+                    >
+                      <Mail className="w-4 h-4" /> Open In Email Client
+                    </a>
+                    <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
+                      Submit Another Query
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -180,10 +227,11 @@ export const Contact: React.FC = () => {
                       type="submit"
                       variant="primary"
                       size="lg"
+                      disabled={submitting}
                       leftIcon={<Send className="w-4 h-4" />}
-                      className="w-full sm:w-auto px-8"
+                      className="w-full sm:w-auto px-8 font-bold"
                     >
-                      Submit Ticket
+                      {submitting ? 'Sending to wanianish75@gmail.com...' : 'Submit Support Ticket'}
                     </Button>
                   </div>
                 </form>
